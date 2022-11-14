@@ -1,0 +1,42 @@
+﻿@model Form.Models.Addemployee
+
+@{
+}
+
+<form method="post" enctype="multipart/form-data" action="Add" onsubmit="alert('Data berhasil ditambahkan, silahkan menunggu');">
+    <div class="form-group">
+        <label for="">Name</label>
+        <input type="text" class="form-control" id="Name" asp-for="Name"  required>
+        <small id="emailHelp" class="form-text text-muted">Masukan Nama.</small>
+    </div>
+    <div class="form-group">
+        <label for="">Email</label>
+        <input type="Email" class="form-control" id="Email" asp-for="Email" required>
+        <small id="emailHelp" class="form-text text-muted">Masukan Email.</small>
+    </div>
+    <div class="form-group">
+        <label for="phone">Phone</label>
+        <input type="number" class="form-control" id="Phone" asp-for="Phone" required>
+        <small id="emailHelp" class="form-text text-muted">Masukan No.</small>
+    </div>
+    <div class="form-group">
+        <label for="Departement">Departement</label>
+        <input type="text" class="form-control" id="Departement" asp-for="Departement" required>
+        <small id="emailHelp" class="form-text text-muted">Masukan Departement.</small>
+    </div>
+    <div class="form-group">
+        <label for="file">Masukan File persyaratan</label>
+        <input class="form-control" type="file" id="file" name="file" required>
+        <small id="emailHelp" class="form-text text-muted">Masukan file.</small>
+    </div>
+    <div class="form-group">
+        <input type="hidden" class="form-control" id="confirmation" asp-for="confirmation" value="no" required>
+    </div>
+    <div class="form-group">
+        <input type="hidden" class="form-control" id="confirmation" asp-for="confirmation" value="">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<script>
+</script>

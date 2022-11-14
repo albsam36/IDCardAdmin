@@ -1,0 +1,302 @@
+﻿@model List<Form.Models.Domain.Employee>
+@{
+    Layout = null;
+}
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+<div class="container">
+    <h2>Employees Record</h2>
+    <a asp-area="" asp-controller="Admin" asp-action="History">
+        <button class="btn" style="float:right">History </button>
+    </a>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody class="tbody">
+        </tbody>
+    </table>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"> 
+                
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="EmployeeId">ID</label>
+                        <input type="text" class="form-control" id="Id" placeholder="Id" disabled="disabled" />
+                    </div> 
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        <input type="text" class="form-control" id="Name" placeholder="Name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Email">Email </label>
+                        <input type="text" class="form-control" id="Email" placeholder="Age" />
+                    </div> 
+                    <div class="form-group">
+                        <label for="State">Phone</label>
+                        <input type="text" class="form-control" id="Phone" placeholder="State" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Country">Departement</label>
+                        <input type="text" class="form-control" id="Departement" placeholder="Country" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Country">File</label>
+                        <input type="text" class="form-control" id="file" placeholder="Country" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Add</button>
+                <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Validasi</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="Download();">Download</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="EmployeeId">ID</label>
+                        <input type="text" class="form-control" id="Id2" placeholder="Id2" disabled="disabled" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Name">Alasan</label>
+                        <input type="text" class="form-control" id="Name2" placeholder="Name2" disabled="disabled" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Email">Email </label>
+                        <input type="text" class="form-control" id="Email2" placeholder="Age" disabled="disabled" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Country">Masukan Alasan Ditolak</label>
+                        <input type="text" class="form-control" id="alasan" placeholder="Alasan" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnAdd" onclick="Delete2();">Delete</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="$('#myModal2').modal('hide');">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        console.log("ready")
+        loadData();
+    });
+
+    //Load Data function
+    function loadData() {
+        $.ajax({
+            url: "/Admin/List",
+            type: "GET",
+            success: function (result) {
+                console.log(result)
+                var html = '';
+                $.each(result, function (key, item) {
+                    html += '<tr>';
+                    html += '<td>' + item.id + '</td>';
+                    html += '<td>' + item.name + '</td>';
+                    html += '<td>' + item.email + '</td>';
+                    html += '<td><a href="#" onclick="getbyID(\'' + item.id + '\')">Edit</a> | <a href="#" onclick="Delete(\'' + item.id + '\')">Delete</a></td>';
+                    html += '</tr>';
+                });
+                $('.tbody').html(html);
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+
+    function getbyID(id) {
+        console.log(id)
+        $('#name').css('border-color', 'lightgrey');
+        $('#email').css('border-color', 'lightgrey');
+        $('#phone').css('border-color', 'lightgrey');
+        $('#departement').css('border-color', 'lightgrey');
+        $.ajax({
+            url: "/Admin/GetbyID/" + id,
+            typr: "GET",
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                console.log("Sukses")
+                console.log(result)
+                $('#Id').val(result.id);
+                $('#Name').val(result.name);
+                $('#Email').val(result.email);
+                $('#Phone').val(result.phone);
+                $('#Departement').val(result.departement);
+                $('#file').val(result.file);
+
+                $('#myModal').modal('show');
+                $('#btnUpdate').show();
+                $('#btnAdd').hide();
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+        return false;
+    }
+
+    function Update() {
+        
+        
+        console.log("sampai disini")
+        $.ajax({
+            url: "/Admin/Update",
+            data: {
+                Id: $('#Id').val(),
+                Name: $('#Name').val(),
+                Email: $('#Email').val(),
+                Phone: $('#Phone').val(),
+                Departement: $('#Departement').val(),
+                confirmation: "yes"
+
+
+            },
+            type: "POST",
+            success: function (result) {
+                console.log(result)
+                console.log('berhasil')
+                loadData();
+                $('#myModal').modal('hide');
+                $('#EmployeeID').val("");
+                $('#Name').val("");
+                $('#Age').val("");
+                $('#State').val("");
+                $('#Country').val("");
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+
+    function Download() {
+        $.ajax({
+            url: "/Admin/Download/",
+            type: 'GET',
+            data: {
+                Id: $('#Id').val()},
+            success: function (r) {
+                console.log(r)
+                //Convert Base64 string to Byte Array.
+                var bytes = Base64ToBytes(r);
+
+                //Convert Byte Array to BLOB.
+                var blob = new Blob([bytes], { type: "application/octetstream" });
+
+                //Check the Browser type and download the File.
+                var isIE = false || !!document.documentMode;
+                if (isIE) {
+                    window.navigator.msSaveBlob(blob, fileName);
+                } else {
+                    var url = window.URL || window.webkitURL;
+                    link = url.createObjectURL(blob);
+                    var a = $("<a />");
+                    a.attr("download", $('#file').val());
+                    a.attr("href", link);
+                    $("body").append(a);
+                    a[0].click();
+                    $("body").remove(a);
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+    function Base64ToBytes(base64) {
+        var s = window.atob(base64);
+        var bytes = new Uint8Array(s.length);
+        for (var i = 0; i < s.length; i++) {
+            bytes[i] = s.charCodeAt(i);
+        }
+        return bytes;
+    };
+    function Delete(id) {
+
+        console.log(id)
+        $('#name2').css('border-color', 'lightgrey');
+        console.log("sampai disini")
+        $.ajax({
+            url: "/Admin/Delete/" + id,
+            type: "GET",
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                $('#Id2').val(result.id);
+                $('#Name2').val(result.name);
+                $('#Email2').val(result.email);
+                $('#alasan').val(result.alasan);
+
+                $('#myModal2').modal('show');
+                $('#btnUpdate').show();
+                $('#btnAdd').hide();
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+        return false;
+    };
+    function Delete2() {
+        $.ajax({
+            url: "/Admin/Delete2",
+            data: {
+                Id: $('#Id2').val(),
+                Name: $('#Name2').val(),
+                Email: $('#Email2').val(),
+                alasan: $('#alasan').val(),
+                confirmation: "ditolak"
+
+
+            },
+            type: "POST",
+            success: function (result) {
+                console.log(result)
+                console.log('delete berhasil')
+                loadData();
+                $('#myModal2').modal('hide');
+                $('#EmployeeID').val("");
+                $('#Name').val("");
+                $('#Age').val("");
+                $('#State').val("");
+                $('#Country').val("");
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    };
+</script>
+
+
